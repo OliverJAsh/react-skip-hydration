@@ -20,7 +20,7 @@ const Item: React.FC<{ value: string }> = ({ value }) => {
     }, []);
 
     return (
-        <div style={{ border: '1px solid black' }}>
+        <div id={value} style={{ border: '1px solid black' }}>
             <Expensive />
             <input defaultValue={value} />
         </div>
@@ -28,16 +28,15 @@ const Item: React.FC<{ value: string }> = ({ value }) => {
 };
 
 export const App = () => {
-    const [isEnhanced, setIsEnhanced] = React.useState(false);
+    const isBrowser = typeof window !== 'undefined';
+    const elements = isBrowser ? ['B'] : ['A', 'B'];
 
-    console.log('Render App', { isEnhanced });
-
-    React.useEffect(() => {
-        console.log('setIsEnhanced(true)');
-        setIsEnhanced(true);
-    }, []);
-
-    const elements = isEnhanced ? ['B'] : ['A', 'B'];
-
-    return elements.map((value) => <Item key={value} value={value} />);
+    return (
+        // TODO: div is needed otherwise no error and wrong DOM
+        <div>
+            {elements.map((value) => (
+                <Item key={value} value={value} />
+            ))}
+        </div>
+    );
 };
