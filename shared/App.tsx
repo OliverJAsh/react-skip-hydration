@@ -42,5 +42,9 @@ export const App = () => {
 
     const elements = isEnhanced ? ['B'] : ['A', 'B'];
 
-    return elements.map((value) => <Item key={value} value={value} />);
+    return elements.map((value) => (
+        <React.Suspense key={value}>
+            <Item value={value} />
+        </React.Suspense>
+    ));
 };
