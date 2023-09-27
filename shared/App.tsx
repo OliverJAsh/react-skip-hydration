@@ -33,8 +33,11 @@ export const App = () => {
     console.log('Render App', { isEnhanced });
 
     React.useEffect(() => {
-        console.log('setIsEnhanced(true)');
-        setIsEnhanced(true);
+        console.log('startTransition');
+        React.startTransition(() => {
+            console.log('setIsEnhanced(true)');
+            setIsEnhanced(true);
+        });
     }, []);
 
     const elements = isEnhanced ? ['B'] : ['A', 'B'];
