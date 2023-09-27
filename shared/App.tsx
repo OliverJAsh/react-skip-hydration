@@ -13,6 +13,7 @@ export const Expensive = () => {
 };
 
 const Item: React.FC<{ value: string }> = ({ value }) => {
+    // TODO: why is B rendering multiple times?
     console.log('Render Item', value);
 
     React.useEffect(() => {
