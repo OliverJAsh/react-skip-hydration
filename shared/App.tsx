@@ -20,22 +20,47 @@ const Item: React.FC<{ value: string }> = ({ value }) => {
     }, []);
 
     return (
-        <div id={value} style={{ border: '1px solid black' }}>
+        <div style={{ border: '1px solid black' }}>
             <Expensive />
             <input defaultValue={value} />
         </div>
     );
 };
 
+const useIsFirstRender = (): boolean => {
+    const isFirst = React.useRef(true);
+
+    if (isFirst.current) {
+        isFirst.current = false;
+
+        return true;
+    } else {
+        return false;
+    }
+};
+
 export const App = () => {
+    const isFirstRender = useIsFirstRender();
     const isBrowser = typeof window !== 'undefined';
-    const elements = isBrowser ? ['B'] : ['A', 'B'];
+    const all = ['A', 'B'];
+    const elements = isBrowser ? ['B'] : all;
+    const unused = ['A'];
+
+    if (typeof window !== 'undefined' && isFirstRender) {
+        unused.map((id) => {
+            console.log('Remove', id);
+            document.querySelector(`#${id}`)?.remove();
+        });
+    }
 
     return (
-        <>
+        // TODO: why is div required??
+        <div>
             {elements.map((value) => (
-                <Item key={value} value={value} />
+                <div id={value} key={value}>
+                    <Item value={value} />
+                </div>
             ))}
-        </>
+        </div>
     );
 };
