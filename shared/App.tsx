@@ -39,28 +39,38 @@ const useIsFirstRender = (): boolean => {
     }
 };
 
-export const App = () => {
-    const isFirstRender = useIsFirstRender();
+export const SkipRenderOnClient: React.FC<{
+    children: React.ReactNode;
+    id: string;
+    shouldRenderOnClient: boolean;
+}> = ({ children, id, shouldRenderOnClient }) => {
     const isBrowser = typeof window !== 'undefined';
-    const all = ['A', 'B'];
-    const elements = isBrowser ? ['B'] : all;
-    const unused = ['A'];
+    const isFirstRender = useIsFirstRender();
 
-    if (typeof window !== 'undefined' && isFirstRender) {
-        unused.map((id) => {
-            console.log('Remove', id);
-            document.querySelector(`#${id}`)?.remove();
-        });
+    if (isBrowser && isFirstRender && shouldRenderOnClient === false) {
+        const el = document.querySelector(`#${id}`);
+        if (el !== null) {
+            console.log('Empty', id);
+            el.innerHTML = '';
+        }
     }
 
-    return (
-        // TODO: why is div required??
-        <div>
-            {elements.map((value) => (
-                <div id={value} key={value}>
-                    <Item value={value} />
-                </div>
-            ))}
-        </div>
-    );
+    const shouldRender = isBrowser ? shouldRenderOnClient : true;
+    return <div id={id}>{shouldRender && children}</div>;
+};
+
+export const App = () => {
+    const isBrowser = typeof window !== 'undefined';
+    const all = ['A', 'B'];
+    const render = isBrowser ? ['B'] : all;
+
+    return all.map((id) => (
+        <SkipRenderOnClient
+            key={id}
+            id={id}
+            shouldRenderOnClient={render.includes(id)}
+        >
+            <Item value={id} />
+        </SkipRenderOnClient>
+    ));
 };
