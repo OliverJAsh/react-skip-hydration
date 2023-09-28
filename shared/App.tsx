@@ -41,14 +41,14 @@ const useIsFirstRender = (): boolean => {
 
 export const SkipRenderOnClient: React.FC<{
     children: React.ReactNode;
-    id: string;
     shouldRenderOnClient: boolean;
-}> = ({ children, id, shouldRenderOnClient }) => {
+}> = ({ children, shouldRenderOnClient }) => {
+    const id = React.useId();
     const isBrowser = typeof window !== 'undefined';
     const isFirstRender = useIsFirstRender();
 
     if (isBrowser && isFirstRender && shouldRenderOnClient === false) {
-        const el = document.querySelector(`#${id}`);
+        const el = document.getElementById(id);
         if (el !== null) {
             console.log('Empty', id);
             el.innerHTML = '';
@@ -65,11 +65,7 @@ export const App = () => {
     const render = isBrowser ? ['B'] : all;
 
     return all.map((id) => (
-        <SkipRenderOnClient
-            key={id}
-            id={id}
-            shouldRenderOnClient={render.includes(id)}
-        >
+        <SkipRenderOnClient key={id} shouldRenderOnClient={render.includes(id)}>
             <Item value={id} />
         </SkipRenderOnClient>
     ));
